@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def dirichlet(j,A,B,r,dx,dt,Nx,g1,g2):
     
     A[0,0] = 1-2*r
@@ -66,19 +69,19 @@ def dirineumann(j,A,B,r,dx,dt,Nx,g1,g2):
         return None
     
 
-def FTCS(x0,xn,dx,t0,tn,dt,fini,g1,g2):
+def FTCS(x0,xn,dx,t0,tn,dt,fini,g1,g2,bc):
     
     beta = 1
     Nx = int((xn-x0)/dx)
-    x = np.linspace(x0,xn,Nx)
+    x = np.linspace(x0,xn,Nx+1)
                    
     Nt = int((tn-t0)/dt)
-    t = np.linspace(t0,tn,Nt)
+    t = np.linspace(t0,tn,Nt+1)
     
     r = beta * dt/(dx)**2
     
-    if(r<0.5):
-        print(" r is less than 1/2")
+    if(r>0.5):
+        print(" r is greater than 1/2")
     
     U = np.zeros((Nt+1,Nx+1))
     
@@ -95,14 +98,14 @@ def FTCS(x0,xn,dx,t0,tn,dt,fini,g1,g2):
         A[i,i] = 1-2*r
         A[i,i+1] = r
     
-    if j in range(Nt):
+    for j in range(Nt):
        
         if (bc=="DD"):
-            dirichlet(j,A,B,r,dx,Nx,g1,g2)
+            dirichlet(j,A,B,r,dx,dt,Nx,g1,g2)
         elif(bc=="DN"):
-            dirineumann(j,A,B,r,dx,Nx,g1,g2)
+            dirineumann(j,A,B,r,dx,dt,Nx,g1,g2)
         elif(bc=="NN"):
-            neumann(j,A,B,r,dx,Nx,g1,g2)
+            neumann(j,A,B,r,dx,dt,Nx,g1,g2)
         else:
             print("wrong input")
             
